@@ -15,5 +15,10 @@ public String getName() {
 public void setName(String name) {
 	this.name = name;
 }
+@Override
+public String toString() {
+	return "StudentDTO [roll=" + roll + ", name=" + name + ", getRoll()=" + getRoll() + ", getName()=" + getName()+
+			"]";
+}
 
 }

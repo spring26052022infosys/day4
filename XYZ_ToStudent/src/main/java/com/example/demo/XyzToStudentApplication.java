@@ -40,7 +40,9 @@ public class XyzToStudentApplication implements CommandLineRunner{
 	
 	private void getStandardDetails() {
 		try {
-		service.getStandardDetails(4);
+		List<StandardDTO> standards=service.getStandardDetails(1);
+		System.out.println("The data");
+		standards.forEach(s->System.out.println(s.getStudentList()));
 		}catch (XyzException exception) {
 			LOGGER.error(environment.getProperty(exception.getMessage()));
 			//e.printStackTrace();

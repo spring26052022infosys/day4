@@ -35,7 +35,7 @@ public class StandardServiceImpl implements StandardService {
 	public List<StandardDTO> getStandardDetails(int standard) throws XyzException {
 		List<StandardDTO> list=repo.getStandardDetails();
 		List<StandardDTO> specificStandard=list.stream().filter(st->st.getStandard()==standard).collect(Collectors.toList());
-		if() {
+		if(specificStandard.size()==0) {
 			throw new XyzException("Service.records");
 		}
 		

@@ -23,4 +23,9 @@ public void setStudentList(List<StudentDTO> studentList) {
 	this.studentList = studentList;
 }
 
+@Override
+public String toString() {
+	return "StandardDTO [standard=" + standard + ", studentList=" + studentList + "]";
+}
+
 }
