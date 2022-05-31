@@ -409,7 +409,7 @@ package com.infosys.demo.dto;
    public class StudentRepositoryImpl implements StudentRepository {
  
      @PersistenceContext
-     private EntityManageer em;   
+     private EntityManager em;   
 
 
      public StudentDTO getStudent(int roll){
@@ -478,6 +478,6 @@ spring.jpa.properties.hibernate.format_sql=true
 --------------------------------------------------------------------------------------------------------------
 For The adding/inserting records we need to check whether the record is already present or not.
 Whether the record is present or not , we check it in the Service layer and from there only we throw the 
-user defined exception.
+user defined exception. 
 ----------------------------------------------------------------------------------------------------------
 
