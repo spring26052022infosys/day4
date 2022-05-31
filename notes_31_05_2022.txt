@@ -256,16 +256,228 @@ Invoke getProjectDetails() method of ProjectServiceImpl class.
 For valid technology: “Java”, output should be logged in console as:
 For invalid technology: “Angular”, output should be logged in console as:
 
------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
+
+The steps:-
+1) create a maven project ( Spring Starter project).
+2) Go for selection the dependencies
+   * mysql driver
+   * spring jpa
+3) creating different packages.
+   * for entity
+   * for dto
+   * for service
+   * for repo
+   * for exception
+   * for validation
+-----------------------------------------
+4) creating the database and the table
+   CREATE database studentDB;
+   use studentDB;
+   CREATE table studentdetails(
+    roll INTEGER PRIMARY KEY,
+    name VARCHAR(20),
+    marks INTEGER
+   );
+  
+    INSERT INTO studentdetails VALUES(1,'Ram',60);
+    commit;
+   SELECT * FROM studentdetails;
+-----------------------------------------------------------------------------------------------------------
+5) Create the entity class.
+
+package com.infosys.demo.entity;
 
 
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="studentdetails")
+
+public class Student{
+
+
+
+@Id
+ private int roll;
+ private String name;
+ private String marks;
+// setters/getters
+public int getRoll() {
+	return roll;
+}
+public void setRoll(int roll) {
+	this.roll = roll;
+}
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+public String getMarks() {
+	return marks;
+}
+public void setMarks(String marks) {
+	this.marks = marks;
+}
+@Override
+	public int hashCode() {
+		return Objects.hash(marks, name, roll);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Student other = (Student) obj;
+		return Objects.equals(marks, other.marks) && Objects.equals(name, other.name) && roll == other.roll;
+	}
+
+@Override
+public String toString() {
+	return "Student [roll=" + roll + ", name=" + name + ", marks=" + marks + "]";
+}
+
+
+}
+
+6) Create the DTO class.
+
+
+package com.infosys.demo.dto;
+   public class StudentDTO{
+    private int roll;
+   private String name;
+   private String marks;
+   // setters/getters
+   }
+
+
+7) Create Exception class.
+
+  package com.infosys.demo.exception;
+  public class RecordNotFoundException extends Exception {
+     
+       public RecordNotFoundException(String message){
+            super(message);
+         }
+
+   }
  
 
- 
+8) Create the service interface and class
+     package com.infosys.demo.service;
+    public interface StudentService {
+      StudentDTO  getStudent(int roll) throws RecordNotFoundException;
 
- 
+    }
 
- 
 
+    package com.infosys.demo.service;
+   @Service 
+   public class StudentServiceImpl implements StudentService {
+     
+     @Autowired     
+     private StudentRepository studentRepository;
+
+     public StudentDTO  getStudent(int roll) throws RecordNotFoundException{
+     StudentDTO studentDTO=studentRepository.getStudent(roll);
+         if(studentDTO==null){
+             throw new RecordNotFoundException("Service.isRollFound");
+           }
+        return studentDTO;     
+      } 
+  }
+
+
+9) Create the repository interface and class
+    package com.infosys.demo.repository;
+    public interface StudentRepository {
+         StudentDTO getStudent(int roll);
+         }
+     
+
+   package com.infosys.demo.repository;
+   @Repository 
+   public class StudentRepositoryImpl implements StudentRepository {
  
+     @PersistenceContext
+     private EntityManageer em;   
+
+
+     public StudentDTO getStudent(int roll){
+                        StudentDTO studentDTO=null;
+                        Student student=em.find(Student.class,roll);
+                        if(student!=null){
+                          studentDTO=new StudentDTO();
+                          studentDTO.setRoll(student.getRoll());
+                          studentDTO.setName(student.getName());
+                          studentDTO.setMarks(Student.getMarks());
+                        }   
+              return StudentDTO;  
+         }
+
+}
+   
+
+
+10) Complete the class with main method:
+
+  
+  @SpringBootApplication
+   public class ReadApplication implements CommandLineRunner{
+
+    @Autowired
+    private StudentService studentService;
+
+    public static void main(String args[]){
+     SpringApplication.run(ReadApplication.class,args);   
+ 
+    }
+ 
+    public void run(String ... args){
+         
+         readStudent();
+
+       
+    }
+
+public void readStudent(){
+       try{
+              int roll=1;
+        StudentDTO studentDTO=getStudent(roll);
+              System.out.println(studentDTO); 
+       
+        }catch(RecordNotFoundException ex){
+          LOGGER.error(ex.getMessage());
+       }
+ 
+    }
+
+------------------------------------------------------------------------------------------------------------
+application.properties
+Service.isRollFound=Roll number not found 
+# MySQL settings
+#Change these settings according to database you are using
+spring.datasource.url=jdbc:mysql://localhost:3306/customer_db
+spring.datasource.username=root
+
+#If MySQL installation is password proctored,then use below property to set password
+spring.datasource.password=password@123
+
+#JPA settings
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+--------------------------------------------------------------------------------------------------------------
+For The adding/inserting records we need to check whether the record is already present or not.
+Whether the record is present or not , we check it in the Service layer and from there only we throw the 
+user defined exception.
+----------------------------------------------------------------------------------------------------------
+
